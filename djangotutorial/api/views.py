@@ -1,12 +1,12 @@
 from django.http import HttpResponse
 
-from app.celery import debug_task
+from app.celery import prepare_video
 
 
 def index(request):
     context = {}
 
-    debug_task.delay()
+    prepare_video.apply_async()
 
     print('context')
 

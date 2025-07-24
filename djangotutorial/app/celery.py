@@ -19,14 +19,20 @@ app.autodiscover_tasks()
 
 
 @app.task
-def debug_task():
+def prepare_video():
     # print(f'Request: {self.request!r}')
     sleep(10)
     print(f'Request')
 
-    test_1.delay()
+    subtitle_task.apply_async(
+        queue='fast',
+    )
+
+    return 'prepare_video'
 
 @app.task
-def test_1():
+def subtitle_task():
     print('start[test_1]')
     sleep(5)
+
+    return 'subtitle_task'
