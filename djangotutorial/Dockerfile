@@ -10,9 +10,13 @@ RUN apk update \
 
 RUN pip install --upgrade pip --no-cache-dir
 
+WORKDIR $APP_HOME
+
+COPY requirements.txt .
+
 RUN mkdir -p $APP_HOME/logs
 RUN chmod -R 755 $APP_HOME/logs
 
-COPY . .
-
 RUN pip install -r requirements.txt
+
+COPY . .
