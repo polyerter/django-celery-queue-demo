@@ -1,0 +1,8 @@
+image:
+  repository: "k3d-registry.localhost:5000/django-app"
+  tag: latest
+  pullPolicy: IfNotPresent
+
+app:
+  env:
+    CELERY_BROKER_URL: redis://redis:6379/0
