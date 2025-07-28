@@ -6,11 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "{{ .Release.Name }}-celery"
+      app: celery
   template:
     metadata:
       labels:
-        app: "{{ .Release.Name }}-celery"
+        app: celery
       annotations:
         checksum/config: '{{ include (print $.Template.BasePath "/configmap-app.yaml") . | sha256sum }}'
     spec:
