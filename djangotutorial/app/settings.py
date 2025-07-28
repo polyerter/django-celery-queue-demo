@@ -127,3 +127,8 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 CELERY_BROKER_URL = env.str('CELERY_BROKER_URL', 'redis://localhost:16379/0')
+
+CELERY_TASK_ROUTES = {
+    'app.celery.process_video': {'queue': 'heavy'},
+    'app.celery.subtitle_task': {'queue': 'light'},
+}

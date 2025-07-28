@@ -32,13 +32,13 @@ services:
     networks:
       - backend
 
-  worker-2:
+  worker-light:
     <<: *worker-common
-    command: celery -A app worker -l INFO --concurrency=3 -Q fast
+    command: celery -A app worker -l INFO --concurrency=3 -Q light
 
   worker-3:
     <<: *worker-common
-    command: celery -A app worker -l INFO --concurrency=3 -Q fast,celery
+    command: celery -A app worker -l INFO --concurrency=3 -Q light,celery
 
   redis:
     image: redis:8.0.3
