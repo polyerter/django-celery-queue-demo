@@ -60,7 +60,7 @@ local\:cluster-delete:
 
 .PHONY: local\:cluster-build
 local\:build:
-	docker build -t $(APP_NAME):$(TAG) ./$(APP_NAME) path to project
+	docker build -t $(APP_NAME):$(TAG) ./$(APP_NAME) #path to project
 	docker tag $(APP_NAME):$(TAG) k3d-$(REGISTRY)/$(APP_NAME):$(TAG)
 	docker push k3d-$(REGISTRY)/$(APP_NAME):$(TAG)
 	echo "Built and pushed k3d-$(REGISTRY)/$(APP_NAME):$(TAG)"
@@ -68,4 +68,5 @@ local\:build:
 .PHONY: local\:deploy
 local\:deploy: local\:build
 	helm upgrade $(APP_NAME) ./.helm --install
+
 

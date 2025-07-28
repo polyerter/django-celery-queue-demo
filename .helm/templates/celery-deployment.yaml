@@ -20,6 +20,6 @@ spec:
           imagePullPolicy: "{{ .Values.image.pullPolicy }}"
           envFrom:
             - configMapRef:
-                name: app-envs
+                name: "{{ .Release.Name }}-app-envs"
           command: [ "celery" ]
           args: [ "-A", "app", "worker", "--loglevel=info" ]
