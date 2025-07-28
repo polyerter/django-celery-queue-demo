@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Release.Name }}-celery-fast"
+  name: "{{ .Release.Name }}-celery-light"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "{{ .Release.Name }}-celery-fast"
+      app: "{{ .Release.Name }}-celery-light"
   template:
     metadata:
       labels:
-        app: "{{ .Release.Name }}-celery-fast"
+        app: "{{ .Release.Name }}-celery-light"
       annotations:
         checksum/config: '{{ include (print $.Template.BasePath "/configmap-app.yaml") . | sha256sum }}'
     spec:
@@ -22,4 +22,4 @@ spec:
             - configMapRef:
                 name: "{{ .Release.Name }}-app-envs"
           command: [ "celery" ]
-          args: [ "-A", "app", "worker", "--loglevel=info", "-Q", "fast"]
+          args: [ "-A", "app", "worker", "--loglevel=info", "-Q", "light"]

@@ -24,9 +24,7 @@ def prepare_video():
     sleep(10)
     print(f'Request')
 
-    subtitle_task.apply_async(
-        queue='fast',
-    )
+    subtitle_task.apply_async()
 
     return 'prepare_video'
 
