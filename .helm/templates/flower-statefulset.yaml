@@ -18,11 +18,20 @@ spec:
         - name: flower
           image: '{{ .Values.flower.image }}'
           ports:
-            - containerPort: 5555
+            - containerPort: {{ $.Values.flower.port }}
           envFrom:
             - configMapRef:
                 name: "{{ .Release.Name }}-app-envs"
-          command: [ "flower" ]
+          env:
+            - name: FLOWER_UPDATE_INTERVAL
+              value: "10"
+          command: ["sh", "-c", "sleep 15 && flower"]
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5555
+            initialDelaySeconds: 20
+            periodSeconds: 5
 
 ---
 apiVersion: v1
