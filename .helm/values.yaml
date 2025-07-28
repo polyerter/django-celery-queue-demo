@@ -1,5 +1,5 @@
 image:
-  repository: "k3d-registry.localhost:5000/django-app"
+  repository: "k3d-registry.localhost:5000/djangotutorial"
   tag: latest
   pullPolicy: IfNotPresent
 
