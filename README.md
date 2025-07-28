@@ -1,6 +1,6 @@
-# Load Optimization
+# Django celery queue demo
 
-## RUN project
+## Run project
 
 Open dictory "dockers"
 
