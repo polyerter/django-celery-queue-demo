@@ -6,7 +6,8 @@ TYPE_ENV=local
 NAMESPACE=${APP_NAME}-${TYPE_ENV}
 REGISTRY_ADDR=registry.localhost
 REGISTRY_PORT=5000
-REGISTRY_HOST=${REGISTRY_ADDR}:${REGISTRY_PORT}
+REGISTRY=${REGISTRY_ADDR}:${REGISTRY_PORT}
+TAG = latest
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
@@ -37,34 +38,35 @@ local\:cluster-install:
 .PHONY: local\:cluster-setup
 local\:cluster-setup:
 	# Create local container registry
-	k3d registry create $$REGISTRY_ADDR --port $$REGISTRY_PORT
+	k3d registry create $(REGISTRY_ADDR) --port $(REGISTRY_PORT)
 
 	# Delete app cluster if exists
-	k3d cluster delete $$APP_NAME
+	k3d cluster delete $(APP_NAME)
 
 	# Create cluster
-	k3d cluster create $$APP_NAME --registry-use k3d-$$REGISTRY_HOST --api-port 127.0.0.1:6555 -p "80:80@loadbalancer" --agents 2
+	k3d cluster create $(APP_NAME) --registry-use k3d-$(REGISTRY) --api-port 127.0.0.1:6555 -p "80:80@loadbalancer" --agents 2
 
 	# Create app namespace
-	kubectl create namespace $$NAMESPACE
+	kubectl create namespace $(NAMESPACE)
 
 	# Set app namespace as default
-	kubectl config set-context --current --namespace=$$NAMESPACE
+	kubectl config set-context --current --namespace=$(NAMESPACE)
 
 
 .PHONY: local\:cluster-delete
 local\:cluster-delete:
-	k3d registry delete $$REGISTRY_ADDR
-	k3d cluster delete $$APP_NAME
+	k3d registry delete $(REGISTRY_ADDR)
+	k3d cluster delete $(APP_NAME)
 
 .PHONY: local\:cluster-build
 local\:build:
-	docker build -t $$APP_NAME:latest ./$$APP_NAME # "./$$APP_NAME" path to project
-	docker tag $APP_NAME:latest k3d-$$REGISTRY_HOST/$$APP_NAME:latest
-	docker push k3d-$$REGISTRY_HOST/$$APP_NAME:latest
+	docker build -t $(APP_NAME):$(TAG) ./$(APP_NAME) #path to project
+	docker tag $(APP_NAME):$(TAG) k3d-$(REGISTRY)/$(APP_NAME):$(TAG)
+	docker push k3d-$(REGISTRY)/$(APP_NAME):$(TAG)
+	echo "Built and pushed k3d-$(REGISTRY)/$(APP_NAME):$(TAG)"
 
-	helm upgrade $$APP_NAME ./.helm --install
-
-
+.PHONY: local\:deploy
+local\:deploy: local\:build
+	helm upgrade $(APP_NAME) ./.helm --install
 
 
