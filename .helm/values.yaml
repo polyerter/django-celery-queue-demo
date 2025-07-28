@@ -5,4 +5,14 @@ image:
 
 app:
   env:
-    CELERY_BROKER_URL: redis://redis:6379/0
+    CELERY_BROKER_URL: "redis://djangotutorial-redis:6379/0"
+
+redis:
+  image: redis:8.0.3
+  port: 6379
+  storageSize: 1Gi
+      
+flower:
+  image: mher/flower:0.9.7
+  port: 5555
+  
