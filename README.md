@@ -24,3 +24,8 @@ make local:cluster-setup
 # Build and deploy to a local cluster
 make local:deploy
 ```
+
+```bash
+# Deleting a local registry and cluster
+make local:cluster-delete
+```
