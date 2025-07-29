@@ -10,6 +10,12 @@ docker compose up
 
 ## Launching a local production-like environment
 
+Install make
+
+```bash
+sudo apt-get -y install make
+```
+
 ```bash
 #Installing the cluster and necessary utilities
 make local:cluster-install
