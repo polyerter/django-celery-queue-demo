@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}-celery"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery
+  template:
+    metadata:
+      labels:
+        app: celery
+      annotations:
+        checksum/config: '{{ include (print $.Template.BasePath "/configmap-app.yaml") . | sha256sum }}'
+    spec:
+      containers:
+        - name: celery
+          image: '{{ .Values.image.repository }}:{{ .Values.image.tag }}'
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          envFrom:
+            - configMapRef:
+                name: "{{ .Release.Name }}-app-envs"
+          command: [ "celery" ]
+          args: [ "-A", "app", "worker", "--loglevel=info" ]

@@ -1,0 +1,61 @@
+version: "3.8"
+
+networks:
+  backend:
+    driver: ${NETWORKS_DRIVER}
+
+services:
+  workspace:
+    build: ${APP_CODE_PATH_HOST}
+    command: python manage.py runserver 0.0.0.0:8000
+    restart: always
+    volumes:
+      - ${APP_CODE_PATH_HOST}/:/usr/src/app/
+    environment:
+      CELERY_BROKER_URL: "${CELERY_BROKER_URL}"
+    ports:
+      - "${WORKSPACE_PORT}:8000"
+    depends_on:
+      - redis
+    networks:
+      - backend
+
+  worker-1: &worker-common
+    build: ${APP_CODE_PATH_HOST}
+    command: celery -A app worker -l INFO --concurrency=3
+    volumes:
+      - ${APP_CODE_PATH_HOST}:/usr/src/app/
+    environment:
+      CELERY_BROKER_URL: "${CELERY_BROKER_URL}"
+    depends_on:
+      - redis
+    networks:
+      - backend
+
+  worker-light:
+    <<: *worker-common
+    command: celery -A app worker -l INFO --concurrency=3 -Q light
+
+  worker-3:
+    <<: *worker-common
+    command: celery -A app worker -l INFO --concurrency=3 -Q light,celery
+
+  redis:
+    image: redis:8.0.3
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - backend
+
+  dashboard:
+    image: mher/flower:0.9.7
+    command: flower
+    ports:
+      - ${DASHBOARD_FLOWER_PORT}:5555
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+    #      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+    depends_on:
+      - redis
+    networks:
+      - backend
