@@ -66,7 +66,7 @@ local\:build:
 	echo "Built and pushed k3d-$(REGISTRY)/$(APP_NAME):$(TAG)"
 
 .PHONY: local\:deploy
-local\:deploy: local\:build
+local\:deploy: local\:deploy
 	helm upgrade $(APP_NAME) ./.helm --install
 
 

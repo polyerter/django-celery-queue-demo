@@ -6,7 +6,9 @@ networks:
 
 services:
   workspace:
-    build: ${APP_CODE_PATH_HOST}
+    build:
+      context: ${APP_CODE_PATH_HOST}
+      dockerfile: Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
     restart: always
     volumes:
@@ -20,8 +22,12 @@ services:
     networks:
       - backend
 
-  worker-1: &worker-common
-    build: ${APP_CODE_PATH_HOST}
+  worker-1:
+    &worker-base
+    build:
+      context: ${APP_CODE_PATH_HOST}
+      dockerfile: Dockerfile
+    image: ${CELERY_IMAGE_NAME:-celery-worker:latest}
     command: celery -A app worker -l INFO --concurrency=3
     volumes:
       - ${APP_CODE_PATH_HOST}:/usr/src/app/
@@ -33,11 +39,11 @@ services:
       - backend
 
   worker-light:
-    <<: *worker-common
+    <<: *worker-base
     command: celery -A app worker -l INFO --concurrency=3 -Q light
 
   worker-3:
-    <<: *worker-common
+    <<: *worker-base
     command: celery -A app worker -l INFO --concurrency=3 -Q light,celery
 
   redis:
